@@ -1,0 +1,33 @@
+ - name: Base configuration for routers and switch
+   hosts: all
+   gather_facts: no
+   connection: network_cli
+
+   tasks:
+     - name: Configure hostname
+       ios_config:
+         lines:
+           - hostname {{inventory_hostname}}
+
+     - name: Configure login banner
+       ios_config:
+         lines:
+           - banner login ^AUTHORIZED ACCESS ONLY^
+
+     - name: Configure interface descriptions on routers
+       ios_config:
+         parents: interface GigabitEthernet0/0/0
+         lines:
+           - description Link to Switch1
+       when: inventory_hostname in ['router1', 'router2']
+
+     - name: configure interface descriptions on switch uplinks
+       ios_config:
+         lines:
+           - interface GigabitEthernet 1/0/1
+           - description Link to Ansible Control Node
+           - interface GigabitEthernet 1/0/2
+           - description Link to Router1
+           - interface GigabitEthernet 1/0/3
+           - description Link to Router2
+       when: inventory_hostname == 'switch1'
