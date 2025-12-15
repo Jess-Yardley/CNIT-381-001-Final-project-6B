@@ -1,0 +1,10 @@
+ - name: Verify connectivity to all network devices
+   hosts: all
+   gather_facts: no
+   connection: network_cli
+
+   tasks:
+     - name: Run show ip interface brief
+       ios_command:
+         commands:
+           - show ip interface brief

@@ -1,0 +1,16 @@
+- name: Backup running configuration from all devices
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Get running config
+      ios_command:
+        commands:
+          - show running-config
+      register: running_config
+
+    - name: Save running config to backup file
+      copy:
+        content: "{{ running_config.stdout[0] }}"
+        dest: "~/network-automation-final/backups/{{ inventory_hostname }}_running-config.txt"

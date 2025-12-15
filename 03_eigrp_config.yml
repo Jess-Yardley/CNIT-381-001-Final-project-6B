@@ -1,0 +1,28 @@
+- name: Configure EIGRP and loopback interfaces
+  hosts: routers
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Create loopback interfaces
+      ios_config:
+        lines:
+          - interface loopback0
+          - ip address {{ loopback0_ip }} 255.255.255.255
+          - no shutdown
+          - interface loopback1
+          - ip address {{ loopback1_ip }} 255.255.255.255
+          - no shutdown
+          - interface loopback2
+          - ip address {{ loopback2_ip }} 255.255.255.255
+          - no shutdown
+
+    - name: Configure EIGRP AS 100
+      ios_config:
+         lines:
+           - router eigrp 100
+           - network 192.168.1.0 0.0.0.255
+           - network {{ loopback0_ip }} 0.0.0.0
+           - network {{ loopback1_ip }} 0.0.0.0
+           - network {{ loopback2_ip }} 0.0.0.0
+           - no auto-summary
