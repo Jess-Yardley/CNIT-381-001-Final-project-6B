@@ -1,0 +1,31 @@
+- name: Configure VLANs and trunk switch
+  hosts: switches
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Create VLAN 10
+      ios_config:
+        lines:
+          - vlan 10
+          - name Management
+
+    - name: Create VLAN 20
+      ios_config:
+        lines:
+          - vlan 20
+          - name Data
+
+    - name: Configure trunk port to router1
+      ios_config:
+        parents: interface GigabitEthernet1/0/2
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,20,1
+
+    - name: Configure trunk port to router2
+      ios_config:
+        parents: interface GigabitEthernet1/0/3
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,20,1
